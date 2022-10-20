@@ -1,3 +1,5 @@
-module github.com/boran14cb/weather_repo
+module example.com
 
 go 1.19
+
+require github.com/golang/mock v1.6.0 // indirect

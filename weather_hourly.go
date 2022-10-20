@@ -13,6 +13,22 @@ type weather interface {
 	CurrentRain() float64
 }
 
+type weatherInfo struct {
+	temperature float64
+	wind        float64
+	rain        float64
+}
+
+func CoallesceWeatherInfo(w weather) weatherInfo {
+	var weatherData weatherInfo
+
+	weatherData.temperature = w.CurrentTemperature()
+	weatherData.wind = w.CurrentWind()
+	weatherData.rain = w.CurrentRain()
+
+	return weatherData
+}
+
 func (result *result) CurrentTemperature() float64 {
 	return result.Hourly.Temperature[0]
 
@@ -63,7 +79,6 @@ func main() {
 
 	response, err := http.Get(URL)
 
-	//fmt.Println(URL)
 	if err != nil {
 		fmt.Println("Im so bad at programming")
 	}
@@ -72,17 +87,13 @@ func main() {
 	body, _ := ioutil.ReadAll(response.Body) // response body is []byte
 
 	var result result
-	//fmt.Println(string(body))
 	json.Unmarshal(body, &result)
 
 	weather = &result
-	fmt.Println("Current Temperature: " + fmt.Sprintf("%v", weather.CurrentTemperature()))
-	fmt.Println("Current Wind Speed: " + fmt.Sprintf("%v", weather.CurrentWind()))
 
-	if weather.CurrentRain() == 0.00 {
-		fmt.Println("It is not raining")
-	} else {
-		fmt.Println("Rain chance(%): " + fmt.Sprintf("%v", weather.CurrentRain()))
-	}
+	var info weatherInfo = CoallesceWeatherInfo(weather)
+	fmt.Println("Current Temperature: " + fmt.Sprintf("%v", info.temperature))
+	fmt.Println("Current Wind Speed: " + fmt.Sprintf("%v", info.wind))
+	fmt.Println("Rain chance(%): " + fmt.Sprintf("%v", info.rain))
 
 }
